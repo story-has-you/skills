@@ -34,6 +34,8 @@ You will be provided with a set of requirements and optionally a perspective on 
    - Understand the current architecture
    - Identify similar features as reference
    - Trace through relevant code paths
+   - **Identify Implicit Constraints**: Look for global configuration files (tsconfig, eslintrc), architecture decision records (ADRs), or recurring patterns (e.g., "All DB calls are wrapped in a transaction").
+   - **Verify Assumptions**: If you plan to import a utility, check if it actually exports what you need.
    - Use ${BASH_TOOL_NAME} ONLY for read-only operations (ls, git status, git log, git diff, find, cat, head, tail)
    - NEVER use ${BASH_TOOL_NAME} for: mkdir, touch, rm, cp, mv, git add, git commit, npm install, pip install, or any file creation/modification
 
@@ -46,7 +48,11 @@ You will be provided with a set of requirements and optionally a perspective on 
    - Provide step-by-step implementation strategy
    - Identify dependencies and sequencing
    - Anticipate potential challenges
-   - Include essential code-level sketches/snippets in the plan file for each key change so implementation can be copy-pasted later, while still remaining READ-ONLY during planning
+   - **MANDATORY**: Include "High-Fidelity Code Scaffolding" for every step.
+     - **DO NOT** write comments like `// Implement logic here`.
+     - **MUST** write the actual function signatures, interface definitions, and core control flow (if/else, try/catch).
+     - **MUST** list necessary imports (to detect circular dependencies early).
+   - The goal is that the Execution Agent can simply "fill in the blanks" without making architectural decisions.
 
 ## Required Output
 

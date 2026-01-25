@@ -21,13 +21,14 @@ graph TD
     E --> F{"存在歧义或多路径?"}
     F -- 是 --> G["**暂停: 调用 AskUser 提问**"]
     G --> H[用户补充信息]
-    H --> E
-    F -- 否 --> I["架构设计 (Reduce: 汇总方案)"]
-    I --> J["撰写计划文件 (强制包含代码)"]
-    J --> K{用户审查计划}
-    K -- 有修改意见 --> I
-    K -- 通过 --> L[调用 ExitPlanMode]
-    L --> M[按计划文件复制代码执行]
+    H --> **I["更新计划文件 (Update Plan)"]**
+    I --> **J{"用户是否批准?"}**
+    J -- 否/还有补充 --> G
+    J -- 是/批准 --> K[调用 ExitPlanMode]
+    F -- 否 --> L["架构设计 (Reduce: 汇总方案)"]
+    L --> M["撰写计划文件 (强制包含代码)"]
+    M --> J
+    K --> N[按计划文件复制代码执行]
 ```
 
 ## 操作准则 (核心约束)
@@ -64,6 +65,11 @@ graph TD
 ```markdown
 # [任务编号] [任务名称] 深度实施方案
 
+## 0. 预检清单 (Pre-Flight Checklist)
+- [ ] 当前环境是否可通过构建？(Build Status)
+- [ ] 关键依赖是否存在？
+- [ ] 是否已读取并理解项目的 CONTRIBUTING.md 或代码规范？
+
 ## 1. 核心变更摘要
 - **目标**: 一句话描述要做什么。
 - **待确认项**: (如果在规划中通过对话已解决，请记录在此，例如：*已确认使用 JWT 方案*)
@@ -73,24 +79,42 @@ graph TD
 | :--- | :--- | :--- |
 | Create | `src/services/auth.ts` | 新增 JWT 验证逻辑 |
 
-## 3. 详细实施步骤 (Implementation Details)
-**注意：本部分包含实施所需的具体代码，Execution 阶段请直接引用。**
+## 3. 核心数据结构与接口 (Data Structures & Interfaces)
+**所有新定义的 Type/Interface 必须在此列出。这是代码实现的基石。**
+
+```typescript
+// src/types/user.ts
+export interface UserProfile {
+  id: string;
+  role: 'admin' | 'user'; // Explicit union types, not just "string"
+  preferences: UserPreferences; // Reference other interfaces
+}
+```
+
+## 4. 详细实施步骤 (Implementation Details)
+**注意：本部分必须包含可直接使用的代码骨架。禁止使用伪代码。**
 
 ### 步骤 1: [具体动作]
 - **文件**: `src/types/user.d.ts`
-- **代码实现**:
-export interface UserProfile {
-  id: string;
-  // ...
+- **依赖**: (列出需要 import 的模块)
+- **代码骨架**:
+```typescript
+// 必须包含完整的函数签名和核心逻辑流
+export async function updateUserProfile(userId: string, data: Partial<UserProfile>): Promise<void> {
+    if (!userId) throw new Error("Invalid ID");
+    // ... 具体调用 ...
 }
+```
 
 ### 步骤 2: ...
 
-## 4. 验证策略
+## 5. 验证策略
 - [ ] 单元测试...
 
-## 5. 回滚方案
-- 如果失败，执行...
+## 5. 风险评估与回滚 (Risk & Rollback)
+- **High Risk**: 修改了 `auth.ts` 核心逻辑，可能导致全站登录失效。
+- **Mitigation**: 必须先编写针对 `auth.ts` 的回归测试。
+- **Rollback**: `git checkout src/services/auth.ts`
 
 ```
 

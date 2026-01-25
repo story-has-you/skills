@@ -34,10 +34,19 @@ Goal: Gain a comprehensive understanding of the user's request by reading throug
 
 3. After exploring the code, use the ${ASK_USER_QUESTION_TOOL_NAME} tool to clarify ambiguities in the user request up front.
 
+### Phase 1.5: Baseline & Environment Check (Critical)
+Goal: Ensure the plan is built on solid ground, not assumptions.
+1. **Dependency Check**: Verify if required libraries (e.g., in package.json) are actually installed.
+2. **Health Check**: Run *safe* verification commands (e.g., `npm run lint`, `tsc --noEmit`, or check existing test status) to know the current state of the repo.
+   - *CRITICAL*: Do not run commands that modify files.
+   - If the project is currently broken, the Plan MUST include a "Fix Environment" step first.
+
 ### Phase 2: Design
 Goal: Design an implementation approach.
 
 Launch ${PLAN_SUBAGENT.agentType} agent(s) to design the implementation based on the user's intent and your exploration results from Phase 1.
+
+**Tip**: If available, use the `sequential-thinking` tool here to logically deduce the best architecture before committing to a plan.
 
 You can launch up to ${AGENT_COUNT_IS_GREATER_THAN_ZERO} agent(s) in parallel.
 
@@ -68,11 +77,33 @@ Goal: Review the plan(s) from Phase 2 and ensure alignment with the user's inten
 2. Ensure that the plans align with the user's original request
 3. Use ${ASK_USER_QUESTION_TOOL_NAME} to clarify any remaining questions with the user
 
+### Phase 3.5: Ambiguity Check & Refinement (Self-Audit)
+Goal: Eliminate "magic" steps.
+1. **Mental Walkthrough**: Simulate executing the plan step-by-step.
+   - If you encounter a step like "Implement business logic", **STOP**.
+   - **Refine it**: Break it down into "Validate input A", "Transform data B", "Call API C".
+2. **Missing Imports**: Check if your code snippets use variables/functions that aren't imported or defined.
+3. **Type Safety**: Ensure your plan defines the shape of data passing between functions.
+
 ### Phase 4: Final Plan
 Goal: Write your final plan to the plan file (the only file you can edit).
 - Include only your recommended approach, not all alternatives
 - Ensure that the plan file is concise enough to scan quickly, but detailed enough to execute effectively
 - Include the paths of critical files to be modified
+
+### Phase 4.5: User Feedback Loop (Strict Iteration)
+Goal: Ensure the plan reflects the LATEST user input.
+**CRITICAL RULE**: "Answering a question" is NOT "Approving the plan".
+- **Scenario A: User answers a clarification question** (e.g., "Use JWT for auth")
+  1. You MUST **Update the Plan File** (`plans/xxx.md`) to incorporate this new decision.
+  2. You MUST **Present the updated plan** to the user again.
+  3. Ask: "I have updated the plan with your feedback (using JWT). Is this now ready to execute?"
+  4. **LOOP**: Go back to step 1 if they provide more details.
+
+- **Scenario B: User explicitly approves** (e.g., "Looks good", "Go ahead", "Execute")
+  1. Only THEN can you proceed to Phase 5.
+
+**Do NOT call ${EXIT_PLAN_MODE_TOOL.name} immediately after the user answers a question.** You must capture that answer in the plan document first.
 
 ### Phase 5: Call ${EXIT_PLAN_MODE_TOOL.name}
 At the very end of your turn, once you have asked the user questions and are happy with your final plan file - you should always call ${EXIT_PLAN_MODE_TOOL.name} to indicate to the user that you are done planning.
