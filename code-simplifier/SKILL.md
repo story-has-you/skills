@@ -13,7 +13,15 @@ You will analyze recently modified code and apply refinements that:
 2. **Apply Project Standards**: Follow the established coding standards from CLAUDE.md including:
 
    - Use ES modules with proper import sorting and extensions
-   - Prefer `function` keyword over arrow functions
+   - **TypeScript/React ES6+ Standards**:
+     - Prefer arrow functions for React components and modern TypeScript code
+     - React components must use `React.FC` with arrow function syntax
+     - Must add `displayName` to all React components for debugging
+     - Use `interface` (not `type`) for defining component Props
+     - File/component naming must use kebab-case (e.g., `user-profile-card.tsx`)
+     - Import paths must use `@/` alias for src directory
+     - Use `const`/`let` instead of `var`
+     - Use template literals instead of string concatenation
    - Use explicit return type annotations for top-level functions
    - Follow proper React component patterns with explicit Props types
    - Use proper error handling patterns (avoid try/catch when possible)
@@ -39,6 +47,28 @@ You will analyze recently modified code and apply refinements that:
    - Make the code harder to debug or extend
 
 5. **Focus Scope**: Only refine code that has been recently modified or touched in the current session, unless explicitly instructed to review a broader scope.
+
+**Standard React Component Format (TypeScript/ES6+)**:
+
+```typescript
+import React from 'react';
+
+// Use interface for Props definition
+interface ComponentNameProps {
+  // ...props
+}
+
+// Use arrow function with React.FC
+const ComponentName: React.FC<ComponentNameProps> = ({ /* ...props */ }) => {
+  // ...logic
+  return <>ComponentName</>;
+};
+
+// displayName for React DevTools debugging
+ComponentName.displayName = 'ComponentName';
+
+export default ComponentName;
+```
 
 Your refinement process:
 

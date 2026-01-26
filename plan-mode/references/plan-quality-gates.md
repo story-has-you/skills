@@ -1,5 +1,50 @@
 # 计划质量闸门（必须逐条通过）
 
+## 代码骨架完整性标准
+
+### 必须包含（100% 强制）
+- [ ] 所有新增函数的完整签名（参数类型 + 返回类型）
+- [ ] 所有新增 interface/type 的完整定义
+- [ ] 所有必要的 import 语句
+- [ ] 核心控制流（if/else, try/catch, switch）
+
+### 应该包含（80% 目标）
+- [ ] 关键业务逻辑的伪代码或注释
+- [ ] 数据转换的具体步骤
+- [ ] API 调用的 endpoint 和 payload 结构
+- [ ] 错误处理的具体策略
+
+### 可以省略（允许执行时补充）
+- [ ] 详细的输入验证逻辑（如正则表达式）
+- [ ] 复杂的算法实现细节
+- [ ] UI 组件的样式代码
+
+### 反例（禁止出现）
+❌ `// 实现业务逻辑`
+❌ `// TODO: 处理边界情况`
+❌ `// 调用相关 API`
+
+### 正例
+✅
+```typescript
+export async function validateUser(userId: string): Promise<ValidationResult> {
+  // 1. 检查用户是否存在
+  const user = await db.users.findById(userId);
+  if (!user) {
+    return { valid: false, reason: 'USER_NOT_FOUND' };
+  }
+
+  // 2. 检查用户状态
+  if (user.status !== 'active') {
+    return { valid: false, reason: 'USER_INACTIVE' };
+  }
+
+  // 3. 检查权限
+  const hasPermission = await checkPermission(user.role, 'access_resource');
+  return { valid: hasPermission, reason: hasPermission ? null : 'INSUFFICIENT_PERMISSION' };
+}
+```
+
 ## 可执行性
 1. 每个步骤都包含明确的文件路径与动作（Create/Modify/Delete）。
 2. 每个关键步骤都包含可直接粘贴的代码骨架（函数签名、核心控制流、必要 import）。
