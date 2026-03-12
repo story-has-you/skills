@@ -57,19 +57,20 @@ flowchart TD
 
 ## 阶段一：英文基线
 1. 确认权威来源，只保留官方页面。
-2. 识别应用主记录：`name`、`slug`、`website`、`author`、`description`、`icon_svg`。
-3. 识别分类绑定，例如 `Development`、`Terminal` 这类站内分类。
-4. 将严格快捷键写入 `public.app_hotkey`。
-5. 将方法说明、配置前提、输入模式等非严格快捷键写入 `public.app_faq`。
-6. 生成幂等 SQL。
-7. 按 `references/output-template.md` 输出计划。
-8. 明确列出：
+2. 识别应用主记录业务字段：`name`、`slug`、`website`、`author`、`description`、`icon_svg`。
+3. 所有主键与关联键都按 UUID 方案处理；`slug` 只作为业务定位与去重条件，不能充当关联键。
+4. 识别分类绑定，例如 `Development`、`Terminal` 这类站内分类。
+5. 将严格快捷键写入 `public.app_hotkey`。
+6. 将方法说明、配置前提、输入模式等非严格快捷键写入 `public.app_faq`。
+7. 生成幂等 SQL。
+8. 按 `references/output-template.md` 输出计划。
+9. 明确列出：
    - 预期 `app_hotkey` 行数
    - FAQ 行数
    - OS 分布
    - 关键假设
    - 官方依据链接
-9. 等待用户确认后，再执行 SQL。
+10. 等待用户确认后，再执行 SQL。
 
 ## 阶段二：国际化
 1. 只在英文基线已经存在后继续。
@@ -97,12 +98,21 @@ flowchart TD
 - 分类优先沿用官方分节标题；如果必须归并，只做最小化归并。
 - 只有在官方明确区分 OS 时才写平台差异；若官方明确说某绑定通用于多平台，才对适用平台展开，绝不脑补额外平台。
 
+## macOS 键位展示规则
+- 只要是 macOS 绑定，入库与计划展示时都使用标准键盘图标，不使用 `Command`、`Option`、`Control`、`Shift` 这类英文单词。
+- 常见等价标准化：`Command -> ⌘`、`Option/Alt -> ⌥`、`Control -> ⌃`、`Shift -> ⇧`、`Caps Lock -> ⇪`、方向键 -> `↑` `↓` `←` `→`。
+- 字母、数字、功能键等非修饰键保留官方键名或字符，不要为了图标化而改写原始语义。
+- 若官方页面已直接使用 macOS 图标，必须原样沿用；若官方仅写文本键名，可在不改变事实的前提下做等价符号标准化，并在计划里明确说明。
+
 ## SQL 生成规则
 - 所有写入必须放在单事务里：`BEGIN ... COMMIT`。
 - 优先用 `WITH` CTE 组织输入数据与 upsert 逻辑。
 - 所有写入都必须幂等：
   - `INSERT ... ON CONFLICT DO UPDATE`
   - 或 `ON CONFLICT DO NOTHING` 配合存在性判断
+- 所有主键与外键都必须使用 UUID：`public.app.id`、`public.app_hotkey.id`、`public.app_faq.id` 以及各 i18n / 关联表的 `*_id` 字段都按 UUID 写入。
+- `slug`、`name`、`category`、`action` 等业务字段只用于定位、去重和 upsert，绝不能直接充当主键或外键。
+- 写下游关联表前，必须先通过 `RETURNING`、CTE 或基于唯一键的回查拿到上游 UUID，再继续写入。
 - 英文阶段至少覆盖：
   - `public.app`
   - `public.app_category`
@@ -113,7 +123,7 @@ flowchart TD
   - `public.app_hotkey_i18n`
   - `public.app_faq_i18n`
 - 大批量翻译映射优先使用 `jsonb_each` / `jsonb_each_text` 展开。
-- `slug`、`app.id`、`app_hotkey.id` 要尽量稳定、可读，方便重复执行和后续维护。
+- 若 schema 提供 `gen_random_uuid()`、`uuidv7()` 或等价 UUID 生成函数，只能用于新增行；重复执行是否命中同一业务记录，必须依赖表上的真实唯一约束。
 - 如果 SQL 很长，计划里可以省略部分映射正文，但必须：
   - 给出完整事务骨架
   - 说明哪些长映射被省略

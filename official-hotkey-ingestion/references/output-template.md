@@ -32,16 +32,17 @@ flowchart TD
 - 如果 SQL 很长：只展示完整事务骨架、关键 CTE、代表性映射，并明确写出：
   - 计划中省略了哪些大段映射
   - 真正执行时会使用完整无删节 SQL
+- 所有关联说明都以 UUID 链路描述；`slug` 只作为查询与去重条件，不作为表间关联键
 
 ## 5. 手动验收
 - `app` 主记录检查
 - `app_category` 绑定检查
-- `app_hotkey` 总量与 OS 分布检查
-- `app_faq` 总量检查
+- `app_hotkey` 总量与 OS 分布检查，且通过 `public.app.id` 关联校验
+- `app_faq` 总量检查，且通过 `public.app.id` 关联校验
 - 若是 i18n，再加：
   - `app_i18n` locale 覆盖
-  - `app_hotkey_i18n` 每语种行数
-  - `app_faq_i18n` 每语种行数
+  - `app_hotkey_i18n` 每语种行数，并通过 hotkey UUID 关联校验
+  - `app_faq_i18n` 每语种行数，并通过 FAQ UUID 关联校验
 
 ## 6. 假设与依据
 - 本次有哪些保守假设
