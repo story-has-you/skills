@@ -1,0 +1,82 @@
+[
+  {
+    "query": "收录 Raycast 的官方快捷键。官网你自己找，只能用官方资料。先给英文基线计划和 SQL，等我确认后再写 PostgreSQL。",
+    "should_trigger": true
+  },
+  {
+    "query": "我这里只有应用名，叫 Warp。请你自己找官网和官方 shortcut docs，把这个 App 的快捷键整理成入库计划。不要第三方来源。",
+    "should_trigger": true
+  },
+  {
+    "query": "这是官网 https://code.claude.com/ 。把 Claude Code 的官方 shortcuts 收录到 hotkey 数据库，llms.txt 如果有要先读，FAQ 和 hotkey 分开处理。",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我同步一下 Linear 最新的官方快捷键文档到 PostgreSQL。英文基线先给计划，确认后再执行。",
+    "should_trigger": true
+  },
+  {
+    "query": "我们站里还没有 Obsidian，麻烦用官网和官方帮助中心把它的 keyboard shortcuts 入库，生成 app、app_hotkey、app_faq 对应 SQL。",
+    "should_trigger": true
+  },
+  {
+    "query": "这个产品叫 Supernotes，我只知道它是个笔记工具。你自己定位官网，确认官方快捷键页面后，按当前 hotkey-cheatsheet schema 做收录方案。",
+    "should_trigger": true
+  },
+  {
+    "query": "claude-code 的英文基线已经有了，现在只补 zh、ja、ru、ar、de、fr、pt、in 的 app_hotkey_i18n 和 app_faq_i18n。翻译后顺手按 humanizer 的思路润一下 description 和 FAQ。",
+    "should_trigger": true
+  },
+  {
+    "query": "把 Notion 的官方快捷键重新同步一遍。重点看有没有新加的 AI 相关快捷键，还是只认官网和官方 docs。先出幂等 SQL 计划。",
+    "should_trigger": true
+  },
+  {
+    "query": "我要收录一个终端工具的快捷键，名称是 Lazygit。请从官方文档找按键，不允许按 Vim 常识自己补。先给英文入库方案。",
+    "should_trigger": true
+  },
+  {
+    "query": "给我做一个官方快捷键入库方案：产品是 Zed，输入资料只有官网。你负责找官方页面、拆分 hotkey 和 FAQ、生成 PostgreSQL SQL，但没有我确认之前别写库。",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我给 SearchInput.tsx 加几个键盘交互，按上下箭头切换结果，Enter 打开详情，Esc 清空。",
+    "should_trigger": false
+  },
+  {
+    "query": "我想从 ShortcutWorld 和几个博客批量抓应用快捷键，官方不官方无所谓，先帮我设计爬虫和去重策略。",
+    "should_trigger": false
+  },
+  {
+    "query": "请帮我审一下 public.app_hotkey 这张表的查询性能，看看要不要补索引或者改 SQL。",
+    "should_trigger": false
+  },
+  {
+    "query": "把 claude-code 这批法语 FAQ 翻译润色得更自然一点，尽量像人工写的，不需要动数据库。",
+    "should_trigger": false
+  },
+  {
+    "query": "我需要一个页面，展示每个 App 的快捷键来源链接和更新时间，帮我设计前端 UI 和筛选交互。",
+    "should_trigger": false
+  },
+  {
+    "query": "整理一份 macOS 系统级常用快捷键大全给我，越全越好，不需要官网出处。",
+    "should_trigger": false
+  },
+  {
+    "query": "我已经写好了 app_hotkey_i18n 的 SQL，帮我 review 一下有没有语法错误或者字段遗漏。",
+    "should_trigger": false
+  },
+  {
+    "query": "从数据库里把所有 Windows 热门应用的快捷键导出成 CSV，我要给市场团队做内容运营。",
+    "should_trigger": false
+  },
+  {
+    "query": "给 hotkey-cheatsheet 的首页加一个『官方验证』角标，并在详情页展示来源域名。",
+    "should_trigger": false
+  },
+  {
+    "query": "我想做一个通用 prompt，把任意第三方文章里的快捷键都提取成 JSON，不需要管是不是官方。",
+    "should_trigger": false
+  }
+]

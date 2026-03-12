@@ -1,0 +1,23 @@
+{
+  "skill_name": "official-hotkey-ingestion",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "收录 Raycast 的官方快捷键。你自己找官网和官方文档，只能用官方资料。先给英文基线计划和 SQL，等我确认后再写库，之后再做多语言。",
+      "expected_output": "先定位 Raycast 官方来源，只输出计划稿，包含英文基线 SQL、手动验收 SQL、官方依据和后续 i18n 方案；在用户确认前不执行数据库写入。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "这是官网 https://code.claude.com/ 。请收录 Claude Code 的快捷键。要求：如果 docs 有 llms.txt 先读索引；只认官方页面；非严格快捷键写 FAQ；SQL 很长时计划里可以缩写，但真正执行时不能遗漏。",
+      "expected_output": "先读取官方 docs 索引并定位权威页面，输出符合两阶段流程的计划稿，英文基线与 i18n 都有完整执行策略，并明确说明执行时将使用完整 SQL。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "英文基线已经有了，slug 是 claude-code。现在只补齐 zh、ja、ru、ar、de、fr、pt、in 的快捷键和 FAQ 国际化，翻译后按 humanizer 思路润色。先给计划和 SQL。",
+      "expected_output": "跳过英文阶段，直接输出 i18n 计划，覆盖 app_i18n、app_hotkey_i18n、app_faq_i18n，并说明数据库使用 in 而不是 id。",
+      "files": []
+    }
+  ]
+}
