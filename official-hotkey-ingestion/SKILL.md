@@ -107,6 +107,7 @@ flowchart TD
 ## SQL 生成规则
 - 所有写入必须放在单事务里：`BEGIN ... COMMIT`。
 - 优先用 `WITH` CTE 组织输入数据与 upsert 逻辑。
+- `public.app_hotkey.hotkey` 必须按“按键 token 数组”写入，不能把组合键拼成单个字符串；例如 `⌘ K` 应写成 `ARRAY['⌘', 'K']::text[]`，`Ctrl Shift P` 应写成 `ARRAY['Ctrl', 'Shift', 'P']::text[]`。
 - 所有写入都必须幂等：
   - `INSERT ... ON CONFLICT DO UPDATE`
   - 或 `ON CONFLICT DO NOTHING` 配合存在性判断
@@ -128,6 +129,18 @@ flowchart TD
   - 给出完整事务骨架
   - 说明哪些长映射被省略
   - 明确承诺“执行时使用完整 SQL，不遗漏任何映射”
+- 计划里若展示代表性 `app_hotkey` SQL 片段，至少给出一条 `hotkey` token 数组示例，例如：
+
+```sql
+WITH hotkey_rows(os, category, action, hotkey_tokens) AS (
+    VALUES
+        ('macos', 'General', 'Open Command Palette', ARRAY['⌘', 'K']::text[]),
+        ('windows', 'General', 'Open Command Palette', ARRAY['Ctrl', 'K']::text[]),
+        ('windows', 'General', 'Open Command Palette', ARRAY['Ctrl', 'Shift', 'P']::text[])
+)
+SELECT * FROM hotkey_rows;
+```
+
 - 真正调用 PostgreSQL MCP 时，必须发送完整无删节 SQL，不允许遗漏任何 locale、action、FAQ 或热键行。
 
 ## 图标与描述规则

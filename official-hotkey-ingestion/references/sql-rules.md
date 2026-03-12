@@ -4,9 +4,47 @@
 - 单事务：`BEGIN` / `COMMIT`
 - 幂等优先：`INSERT ... ON CONFLICT`
 - 批量映射优先用 CTE + `VALUES` 或 `jsonb_each` / `jsonb_each_text`
+- `public.app_hotkey.hotkey` 按按键 token 数组写入，不把 `⌘ K`、`Ctrl Shift P` 这类组合键拼成一个字符串
 - 执行时 SQL 必须完整，不能因为消息太长省略任何条目
 - 所有主键与外键一律使用 UUID，关联必须通过 UUID 字段完成，不使用 `slug` 或语义字符串充当关联键
 - 上游记录写入后，必须通过 `RETURNING` 或唯一键回查拿到 UUID，再继续写下游关联表
+
+## `app_hotkey.hotkey` 代表性写法
+
+```sql
+WITH target_app AS (
+    SELECT id
+    FROM public.app
+    WHERE slug = 'claude-code'
+),
+hotkey_rows(os, category, action, hotkey_tokens) AS (
+    VALUES
+        ('macos', 'General', 'Open Command Palette', ARRAY['⌘', 'K']::text[]),
+        ('windows', 'General', 'Open Command Palette', ARRAY['Ctrl', 'K']::text[]),
+        ('windows', 'General', 'Open Command Palette', ARRAY['Ctrl', 'Shift', 'P']::text[])
+)
+INSERT INTO public.app_hotkey (
+    id,
+    app_id,
+    os,
+    category,
+    action,
+    hotkey
+)
+SELECT
+    gen_random_uuid(),
+    target_app.id,
+    hotkey_rows.os,
+    hotkey_rows.category,
+    hotkey_rows.action,
+    hotkey_rows.hotkey_tokens
+FROM target_app
+CROSS JOIN hotkey_rows;
+```
+
+- 上面示例只展示 `hotkey` 字段形态与 UUID 关联链路。
+- 真正执行时，仍需按目标库的真实唯一约束补齐幂等 `ON CONFLICT` 或存在性判断。
+- macOS 绑定优先用标准符号 token，如 `⌘`、`⌥`、`⌃`、`⇧`。
 
 ## 英文阶段建议覆盖
 - `public.app`
