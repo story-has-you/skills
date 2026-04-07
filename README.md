@@ -292,6 +292,14 @@ graph TD
 
 ## 快速开始
 
+### 使用 `npx skills update` 同步技能
+
+```bash
+SKILLS_REPO=<你的技能仓库地址> npx skills update
+```
+
+该命令会将技能同步到 `$CODEX_HOME/skills`（默认 `~/.codex/skills`），并从 `master` 分支执行快进更新。详细说明见：`docs/npx-skills-update.md`。
+
 ### 前置要求
 
 - 安装 [Claude Code CLI](https://claude.com/claude-code)
