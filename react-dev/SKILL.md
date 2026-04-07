@@ -86,6 +86,7 @@ description: MUST BE USED PROACTIVELY whenever writing React or TypeScript code.
     
 2.  **命名与格式 (Naming & Formatting)**
     * **文件/组件命名**: 统一使用**小写字母**和 **`-`** 分隔 (e.g., `user-profile-card.tsx`)。
+    * **TSX 文件职责约束**: 一个 `.tsx` 文件只能定义**一个组件**（即一个组件文件只承载单一组件职责），禁止在同一 `.tsx` 文件中声明多个组件实现。
     * **组件定义**:
         * 必须使用 **ES6 箭头函数** 和 `React.FC` 定义函数组件。
         * 必须为组件添加 `displayName` 以便调试。
